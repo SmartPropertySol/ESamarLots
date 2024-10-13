@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/lightbox2/dist/css/lightbox.css" />
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+        #map {
+            height: calc(100vh - 70px);
+            width: 100%;
+        }
+        .title {
+            position: absolute;
+            background: rgba(195, 243, 185, 0.8);
+            padding: 10px;
+            border-radius: 10px;
+            top: 10px;
+            left: 1600px;
+            z-index: 500;
+        }
+        .logo-left {
+            position: absolute;
+            top: 10px;
+            left: 50px;
+            z-index: 1000;
+            width: 100px;
+        }
+        .logo-right {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 1000;
+            width: 100px;
+        }
+
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 9999;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.9);
+        }
+        .modal-content {
+            margin: 5% auto;
+            display: block;
+            width: 80%; /* 80% of the screen size */
+            max-width: 1000px; /* Maximum width of the modal */
+        }
+        .modal-content iframe {
+            width: 100%;
+            height: 80vh; /* 80% height of the viewport */
+        }
+        .close {
+            position: absolute;
+            top: 15px;
+            right: 35px;
+            color: #fff;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+<div class="title">
+    <h2>LOT FOR SALE</h2>
+    <h3>CHRISTIAN GODINO</h3>
+    <p>Contact: 09285354832</p>
+    <p><a href="https://www.facebook.com/christian.godino.18" target="_blank">FB: christian.godino.18</a></p>
+</div>
+
+<!-- Logo on the top left -->
+<img class="logo-left" src="https://i.imgur.com/8aLiKvh.png" alt="Left Logo">
+<!-- Logo on the top right -->
+<img class="logo-right" src="https://i.imgur.com/8aLiKvh.png" alt="Right Logo">
+
+<div id="map"></div>
+
+<!-- Video modal -->
+<div id="videoModal" class="modal">
+    <span class="close">&times;</span>
+    <div class="modal-content">
+        <iframe id="videoFrame" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+    </div>
+</div>
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script src="https://unpkg.com/lightbox2/dist/js/lightbox-plus-jquery.js"></script>
+<script>
+    // Initialize the Leaflet map centered on Borongan City
+    var myMap = L.map('map').setView([11.6076, 125.4858], 13);
+
+    // Aerial view base map
+    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+        maxZoom: 18,
+        attribution: 'Tiles &copy; Esri'
+    }).addTo(myMap);
+
+    // Polygons
+    var polygon1 = L.polygon([
+        [11.629210190909845, 125.4203936451288],
+        [11.629741863878335, 125.42014051638083],
+        [11.629802434955108, 125.42039935671512],
+        [11.62912983545383, 125.42075096191606],
+        [11.629063143606043, 125.42062067613689],
+        [11.629321395285887, 125.42046184635835]
+    ], { color: 'red', fillOpacity: 0.3 }).addTo(myMap);
+
+    var polygon2 = L.polygon([
+        [11.613796567905004, 125.43092189094848],
+        [11.613806221005182, 125.43130623304297],
+        [11.613731445857761, 125.43133425805077],
+        [11.613707222241677, 125.4309218195425]
+    ], { color: 'red', fillOpacity: 0.3 }).addTo(myMap);
+
+    // Define markers with custom images and videos
+    var markers = [
+        {
+            coords: [11.613834651131745, 125.43098997815038],
+            title: "LOT-001",
+            location: "Brgy Balud, Borongan City",
+            area: "200 sq.m.",
+            cost: "P2500.00",
+            images: [
+                'https://i.imgur.com/lZrVJx7.png',
+                'https://via.placeholder.com/150',
+                'https://via.placeholder.com/150',
+                'https://via.placeholder.com/150'
+            ],
+            videos: [
+                'https://www.youtube.com/embed/WoNlC4ecuEk',
+                'https://www.youtube.com/embed/3JZ_D3ELwOQ'
+            ]
+        },
+        {
+            coords: [11.6080, 125.4860],
+            title: "LOT-002",
+            location: "Brgy Balud, Borongan City",
+            area: "200 sq.m.",
+            cost: "P2500.00",
+            images: [
+                'https://i.imgur.com/SuZ61P3.jpg?1',
+                'https://i.imgur.com/SuZ61P3.jpg?1',
+                'https://i.imgur.com/SuZ61P3.jpg?1',
+                'https://i.imgur.com/SuZ61P3.jpg?1'
+            ],
+            videos: [
+                'https://www.youtube.com/embed/Qr98f2VFsD4',
+                'https://www.youtube.com/embed/WoNlC4ecuEk'
+            ]
+        },
+        {
+            coords: [11.6090, 125.4870],
+            title: "LOT-003",
+            location: "Brgy Balud, Borongan City",
+            area: "200 sq.m.",
+            cost: "P2500.00",
+            images: [
+                'https://via.placeholder.com/150',
+                'https://via.placeholder.com/150',
+                'https://via.placeholder.com/150',
+                'https://via.placeholder.com/150'
+            ],
+            videos: [
+                'https://www.youtube.com/embed/dQw4w9WgXcQ',
+                'https://www.youtube.com/embed/3JZ_D3ELwOQ'
+            ]
+        },
+        {
+            coords: [11.6100, 125.4880],
+            title: "LOT-004",
+            location: "Brgy Balud, Borongan City",
+            area: "200 sq.m.",
+            cost: "P2500.00",
+            images: [
+                'https://via.placeholder.com/150',
+                'https://via.placeholder.com/150',
+                'https://via.placeholder.com/150',
+                'https://via.placeholder.com/150'
+            ],
+            videos: [
+                'https://www.youtube.com/embed/dQw4w9WgXcQ',
+                'https://www.youtube.com/embed/3JZ_D3ELwOQ'
+            ]
+        }
+    ];
+
+    // Add markers to the map
+    markers.forEach(function(marker) {
+        var markerInstance = L.marker(marker.coords).addTo(myMap);
+
+        markerInstance.on('click', function() {
+            var content = `<strong>${marker.title}</strong><br>
+                           Location: ${marker.location}<br>
+                           Area: ${marker.area}<br>
+                           Cost: ${marker.cost}<br>`;
+
+            content += '<h4>Images:</h4>';
+            marker.images.forEach(function(image, index) {
+                content += `<a href="${image}" data-lightbox="${marker.title}" data-title="Image ${index + 1}"><img src="${image}" alt="Image ${index + 1}" style="width: 50px; margin-right: 5px;"></a>`;
+            });
+
+            content += '<h4>Videos:</h4>';
+            marker.videos.forEach(function(video, index) {
+                content += `<button onclick="playVideo('${video}')">Play Video ${index + 1}</button><br>`;
+            });
+
+            L.popup().setLatLng(marker.coords).setContent(content).openOn(myMap);
+        });
+    });
+
+    // Handle modal video player
+    var modal = document.getElementById("videoModal");
+    var videoFrame = document.getElementById("videoFrame");
+    var closeModal = document.getElementsByClassName("close")[0];
+
+    function playVideo(videoUrl) {
+        modal.style.display = "block";
+        videoFrame.src = videoUrl;
+    }
+
+    closeModal.onclick = function() {
+        modal.style.display = "none";
+        videoFrame.src = ""; // Stop the video when the modal is closed
+    };
+
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+            videoFrame.src = ""; // Stop the video when the modal is closed
+        }
+    };
+</script>
+</body>
+</html>
