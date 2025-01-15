@@ -18,10 +18,10 @@
         .title {
             position: absolute;
             background: rgba(195, 243, 185, 0.8);
-            padding: 10px;
+            padding: 5px;
             border-radius: 10px;
-            top: 10px;
-            left: 1600px;
+            top: 5px;
+            left: 1520px;
             z-index: 500;
         }
         .logo-left {
@@ -29,14 +29,14 @@
             top: 10px;
             left: 50px;
             z-index: 1000;
-            width: 100px;
+            width: 150px;
         }
         .logo-right {
             position: absolute;
             top: 10px;
             right: 10px;
             z-index: 1000;
-            width: 100px;
+            width: 150px;
         }
 
         /* Modal styles */
@@ -59,7 +59,7 @@
         }
         .modal-content iframe {
             width: 100%;
-            height: 80vh; /* 80% height of the viewport */
+            height: 200vh; /* 80% height of the viewport */
         }
         .close {
             position: absolute;
@@ -70,22 +70,76 @@
             font-weight: bold;
             cursor: pointer;
         }
+        .legend {
+            position: absolute;
+            background: white;
+            padding: 10px;
+            border-radius: 10px;
+            bottom: 10px;
+            left: 10px;
+            z-index: 500;
+            font-size: 14px;
+        }
+        .legend h4 {
+            margin: 0 0 10px;
+        }
+        .legend button {
+            display: block;
+            margin-bottom: 5px;
+            padding: 5px 10px;
+            border: none;
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .legend button:hover {
+            background-color: #45a049;
+        }
+        .popup-content img {
+            width: 50px;
+            height: 50px;
+            margin: 2px;
+            cursor: pointer;
+        }
+        .popup-content iframe {
+            width: 150px;
+            height: 84px;
+            margin: 5px 0;
+        }
+        .distance-label {
+            background-color: white;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-size: 12px;
+            font-weight: bold;
+            line-height: 1.2;
+        }
     </style>
 </head>
 <body>
 <div class="title">
     <h2>LOT FOR SALE</h2>
-    <h3>CHRISTIAN GODINO</h3>
-    <p>Contact: 09285354832</p>
-    <p><a href="https://www.facebook.com/christian.godino.18" target="_blank">FB: christian.godino.18</a></p>
+    <h3>ERIK G. COSTUNA</h3>
+    <p>Contact: 0956 4907947</p>
+    <p><a href="https://www.facebook.com/EsamarRealtor" target="_blank">FB: SMART Property Solutions</a></p>
 </div>
 
 <!-- Logo on the top left -->
-<img class="logo-left" src="https://i.imgur.com/8aLiKvh.png" alt="Left Logo">
+<img class="logo-left" src="https://github.com/SmartPropertySolutionsESamar/easternsamarlotforsale/blob/main/images/logo.png?raw=true" alt="Left Logo"> 
 <!-- Logo on the top right -->
-<img class="logo-right" src="https://i.imgur.com/8aLiKvh.png" alt="Right Logo">
+<img class="logo-right" src="https://github.com/SmartPropertySolutionsESamar/easternsamarlotforsale/blob/main/images/enrico.jpg?raw=true" alt="Right Logo">
 
 <div id="map"></div>
+
+<!-- Legend -->
+<div class="legend">
+    <h4>Lot Legend</h4>
+    <button onclick="zoomToLot(0)">Lot 001</button>
+    <button onclick="zoomToLot(1)">Lot 002</button>
+    <button onclick="zoomToLot(2)">Lot 003</button>
+    <button onclick="zoomHome()">Home</button>
+</div>
 
 <!-- Video modal -->
 <div id="videoModal" class="modal">
@@ -93,7 +147,7 @@
     <div class="modal-content">
         <iframe id="videoFrame" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
     </div>
-</div>
+
 
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script src="https://unpkg.com/lightbox2/dist/js/lightbox-plus-jquery.js"></script>
@@ -101,36 +155,57 @@
     // Initialize the Leaflet map centered on Borongan City
     var myMap = L.map('map').setView([11.6076, 125.4858], 13);
 
-    // Aerial view base map
-    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-        maxZoom: 18,
-        attribution: 'Tiles &copy; Esri'
+    // Satellite layer with 50% opacity
+    var satelliteLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+        maxZoom: 20,
+        opacity: 0.75,
+        subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
     }).addTo(myMap);
+
+    // Street view layer with 50% opacity
+    var streetLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
+        maxZoom: 20,
+        opacity: 0.35,
+        subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
+    }).addTo(myMap);
+
 
     // Polygons
     var polygon1 = L.polygon([
-        [11.629210190909845, 125.4203936451288],
-        [11.629741863878335, 125.42014051638083],
-        [11.629802434955108, 125.42039935671512],
-        [11.62912983545383, 125.42075096191606],
-        [11.629063143606043, 125.42062067613689],
-        [11.629321395285887, 125.42046184635835]
+        [11.629302105018809, 125.42044456965897],
+        [11.629335421564434, 125.42050504032454],
+        [11.629037423639389, 125.42067889360192],
+        [11.629142926036423, 125.42087353365503],
+        [11.629825914276708, 125.42050504035672],
+        [11.629711157562696, 125.42023481193331],
+        [11.629302105018809, 125.42044456965897]
     ], { color: 'red', fillOpacity: 0.3 }).addTo(myMap);
 
     var polygon2 = L.polygon([
-        [11.613796567905004, 125.43092189094848],
-        [11.613806221005182, 125.43130623304297],
-        [11.613731445857761, 125.43133425805077],
-        [11.613707222241677, 125.4309218195425]
+        [11.626178134540083, 125.44287872399764],
+        [11.625832695571319, 125.44273467383914],
+        [11.625786474832424, 125.44292342918988],
+        [11.626024876453812, 125.44298551976584],
+        [11.626012713110555, 125.4430848646872],
+        [11.6261367791858, 125.44311218454061],
+        [11.626178134540083, 125.44287872399764]
+    ], { color: 'red', fillOpacity: 0.3 }).addTo(myMap);
+
+    var polygon3 = L.polygon([
+        [11.613804878939504,125.4309201952421],
+        [11.613804878939504,125.43136465574008],
+        [11.613875380645467,125.43136465574008],
+        [11.613875380645467,125.4309201952421],
+        [11.613804878939504,125.4309201952421]
     ], { color: 'red', fillOpacity: 0.3 }).addTo(myMap);
 
     // Define markers with custom images and videos
     var markers = [
         {
-            coords: [11.613834651131745, 125.43098997815038],
+            coords: [11.629568637091609, 125.4204993711952],
             title: "LOT-001",
-            location: "Brgy Balud, Borongan City",
-            area: "200 sq.m.",
+            location: "Brgy Surok, Borongan City",
+            area: "350 sq.m.",
             cost: "P2500.00",
             images: [
                 'https://i.imgur.com/lZrVJx7.png',
@@ -139,84 +214,175 @@
                 'https://via.placeholder.com/150'
             ],
             videos: [
-                'https://www.youtube.com/embed/WoNlC4ecuEk',
-                'https://www.youtube.com/embed/3JZ_D3ELwOQ'
+                'https://www.youtube.com/embed/lp4xW2d_n-o' ,
+                'https://www.youtube.com/embed/WoNlC4ecuEk'
+            ],
+            routes: [
+                { 
+                    coords: [[11.6290150071816,125.420714411133],[11.6291759427984,125.420929392315],[11.6292687260292,125.421074867073],[11.6293581955555,125.421338751559],[11.6294774882061,125.421524823965],[11.6295743024513,125.42163601411],[11.6296673363335,125.421678506859],[11.6300810919078,125.42170850174],[11.6307053988778,125.421765989423],[11.6320196006618,125.421781985867],[11.6324735764178,125.422851056459],[11.6325630449018,125.423165687902],[11.6326293178346,125.423524300091],[11.6326160632495,125.423808483333],[11.6325166536694,125.424136647915],[11.6321919135062,125.4249486004],[11.6319036256806,125.425628610305],[11.6317578248278,125.425902644147],[11.6316053965813,125.426115781579],[11.6314264589259,125.426602952998],[11.6313601833887,125.426863455278],[11.6313966336627,125.427130722858],[11.6315159254305,125.42744873744],[11.6316285898425,125.427790433983],[11.6316882357456,125.428179494514],[11.6318307217585,125.428683580366],[11.631860544659,125.429072640759],[11.6318075261778,125.429553045792],[11.6317478803824,125.430189075056],[11.6316981723029,125.430547691879],[11.6315291757299,125.430997648684],[11.6314629025351,125.431227701785],[11.6313734336973,125.431687807991],[11.6313336697608,125.431971991234],[11.6313469244069,125.43230353835],[11.6314463342345,125.432777177089],[11.631535802859,125.433338773792],[11.63156562579,125.433646638973],[11.63156562579,125.434177790987],[11.6314960389467,125.434658196195],[11.6313933122362,125.435260394231],[11.6312607657662,125.435784779978],[11.6309592223133,125.436194139172],[11.6308001662878,125.436454640508],[11.6306179144864,125.436857233437],[11.6303726975881,125.43739853612],[11.6301341130389,125.437933071292],[11.6300910352528,125.438119143678],[11.6300678395324,125.438379645102],[11.6299618018639,125.43881606944],[11.6298623915061,125.439093486415],[11.6296304288499,125.439506220641],[11.6293123152031,125.439807319559],[11.6287920660584,125.44033508844],[11.6280033996031,125.440974497748],[11.6274036190224,125.441509032904],[11.6267375626525,125.442016503496],[11.6264857200614,125.442114614443],[11.6263796792214,125.441955601576],[11.626104640274,125.441654502663],[11.6256208361633,125.441231610933],[11.6253027179207,125.440947427695],[11.6251469723908,125.440879765027],[11.6249282657749,125.44087299876],[11.6239043176719,125.440967724803],[11.6231984874365,125.441004938684],[11.6230062893786,125.440984639881],[11.6228107774225,125.440889912115],[11.6222938299053,125.440470403509],[11.6215482354431,125.43987835942],[11.6205772967649,125.439137453106],[11.6200238937686,125.438741626855],[11.6193677613402,125.438291670052],[11.6187315102384,125.437845096385],[11.6181383433656,125.43744589242],[11.6176644668932,125.437090663367],[11.6172502385481,125.436704986108],[11.6166868870111,125.43608248948],[11.6162560872379,125.43566297923],[11.6157291860139,125.435141976616],[11.615470706821,125.43492207496],[11.6147979943819,125.43455331337],[11.613999353369,125.434133804773],[11.613449250127,125.433866535689],[11.6126307219469,125.433501157233],[11.6124451443728,125.433416578886],[11.6118983526398,125.433152694387],[11.6110731921001,125.432821147271],[11.6105993037538,125.432635073807],[11.6102380875172,125.43252343039],[11.609837103807,125.432449001446],[11.6093466430259,125.432452383423],[11.6088230426638,125.432553877485],[11.6084253708483,125.432685819722],[11.6078354890368,125.432854974008]],
+                    label: "5.28 km CITY CENTER", 
+                    color: "black" 
+                },
+                { 
+                    coords: [[11.611058774278959,125.43281758237293],[11.611408338540159,125.43191279769866]],
+                    label: "4.93 km HOSPITAL", 
+                    color: "black" 
+                },
+                { 
+                    coords: [[11.612184886446585,125.43329698524644],[11.61209478030726,125.43350231763827]],
+                    label: "4.72 km MetroBANK", 
+                    color: "black" 
+                },
+                { 
+                    coords: [[11.609223161168458,125.43247807940111],[11.610411464791468,125.43585648638344],[11.61095725374821,125.43762680001106]],
+                    label: "4.72 km St.Mary's COLLEGE", 
+                    color: "black" 
+                },
+                { 
+                    coords: [[11.613463337308701,125.43387376112781],[11.613380360584685,125.4340792301565]], 
+                    label: "4.64 km SAVEMORE", 
+                    color: "black" 
+                }
             ]
         },
         {
-            coords: [11.6080, 125.4860],
+            coords: [11.6259776998738, 125.44289404488808],
             title: "LOT-002",
-            location: "Brgy Balud, Borongan City",
+            location: "Brgy Sabang, Borongan City",
             area: "200 sq.m.",
             cost: "P2500.00",
             images: [
-                'https://i.imgur.com/SuZ61P3.jpg?1',
-                'https://i.imgur.com/SuZ61P3.jpg?1',
-                'https://i.imgur.com/SuZ61P3.jpg?1',
-                'https://i.imgur.com/SuZ61P3.jpg?1'
+                'https://github.com/SmartPropertySolutionsESamar/easternsamarlotforsale/blob/main/images/pic1.png?raw=true',
+                'https://github.com/SmartPropertySolutionsESamar/easternsamarlotforsale/blob/main/images/pic2.png?raw=true',
+                'https://github.com/SmartPropertySolutionsESamar/easternsamarlotforsale/blob/main/images/pic3.png?raw=true',
+                'https://github.com/SmartPropertySolutionsESamar/easternsamarlotforsale/blob/main/images/pic4.png?raw=true'
             ],
             videos: [
-                'https://www.youtube.com/embed/Qr98f2VFsD4',
+                'https://github.com/SmartPropertySolutionsESamar/easternsamarlotforsale/blob/main/images/github%20balud.mp4',
                 'https://www.youtube.com/embed/WoNlC4ecuEk'
+                ],
+            routes: [
+            { 
+                    coords: [[[11.6138320392987,125.430902101926],[11.6135038697128,125.430903584352],[11.613166261515,125.430947439031],[11.6127510665888,125.430974566962],[11.6123126197644,125.430994912815],[11.6117529346948,125.431052559279],[11.6114822261,125.431110205874],[11.6109275217777,125.431308577907],[11.6102897765266,125.431552728197],[11.6097533371024,125.431813832502],[11.6091537876692,125.432105456419],[11.6091023027541,125.432132584226],[11.6092052725738,125.432464899866],[11.6089345595133,125.432534408779],[11.6085907726925,125.43262935609],[11.6082586096292,125.432746342823],[11.6078234773642,125.432849767588],[11.6073999691028,125.43294640944],[11.6070777709978,125.433037965784],]],
+                    label: "0.83 km CITY CENTER", 
+                    color: "black" 
+                },
+                { 
+                    coords: [[11.611058774278959,125.43281758237293],[11.611408338540159,125.43191279769866]],
+                    label: "4.93 km HOSPITAL", 
+                    color: "black" 
+                },
+                { 
+                    coords: [[11.612184886446585,125.43329698524644],[11.61209478030726,125.43350231763827]],
+                    label: "4.72 km MetroBANK", 
+                    color: "black" 
+                },
+                { 
+                    coords: [[11.609223161168458,125.43247807940111],[11.610411464791468,125.43585648638344],[11.61095725374821,125.43762680001106]],
+                    label: "4.72 km St.Mary's COLLEGE", 
+                    color: "black" 
+                },
+                { 
+                    coords: [[11.613463337308701,125.43387376112781],[11.613380360584685,125.4340792301565]], 
+                    label: "4.64 km SAVEMORE", 
+                    color: "black" 
+                }
             ]
         },
         {
-            coords: [11.6090, 125.4870],
+            coords: [11.613848864745037, 125.43110857043001],
             title: "LOT-003",
             location: "Brgy Balud, Borongan City",
             area: "200 sq.m.",
             cost: "P2500.00",
             images: [
-                'https://via.placeholder.com/150',
-                'https://via.placeholder.com/150',
-                'https://via.placeholder.com/150',
-                'https://via.placeholder.com/150'
+                'https://github.com/SmartPropertySolutionsESamar/easternsamarlotforsale/blob/main/images/pic1.png?raw=true',
+                'https://github.com/SmartPropertySolutionsESamar/easternsamarlotforsale/blob/main/images/pic2.png?raw=true',
+                'https://github.com/SmartPropertySolutionsESamar/easternsamarlotforsale/blob/main/images/pic3.png?raw=true',
+                'https://github.com/SmartPropertySolutionsESamar/easternsamarlotforsale/blob/main/images/pic4.png?raw=true'
             ],
             videos: [
                 'https://www.youtube.com/embed/dQw4w9WgXcQ',
                 'https://www.youtube.com/embed/3JZ_D3ELwOQ'
-            ]
-        },
-        {
-            coords: [11.6100, 125.4880],
-            title: "LOT-004",
-            location: "Brgy Balud, Borongan City",
-            area: "200 sq.m.",
-            cost: "P2500.00",
-            images: [
-                'https://via.placeholder.com/150',
-                'https://via.placeholder.com/150',
-                'https://via.placeholder.com/150',
-                'https://via.placeholder.com/150'
-            ],
-            videos: [
-                'https://www.youtube.com/embed/dQw4w9WgXcQ',
-                'https://www.youtube.com/embed/3JZ_D3ELwOQ'
+                ],
+            routes: [
+            { 
+                    coords: [[11.6138320392987,125.430902101926],[11.6135038697128,125.430903584352],[11.613166261515,125.430947439031],[11.6127510665888,125.430974566962],[11.6123126197644,125.430994912815],[11.6117529346948,125.431052559279],[11.6114822261,125.431110205874],[11.6109275217777,125.431308577907],[11.6102897765266,125.431552728197],[11.6097533371024,125.431813832502],[11.6091537876692,125.432105456419],[11.6091023027541,125.432132584226],[11.6092052725738,125.432464899866],[11.6089345595133,125.432534408779],[11.6085907726925,125.43262935609],[11.6082586096292,125.432746342823],[11.6078234773642,125.432849767588],[11.6073999691028,125.43294640944],[11.6070777709978,125.433037965784]],
+                    label: "0.83 km CITY CENTER", 
+                    color: "black" 
+                },
+                { 
+                    coords: [[11.6092052622285,125.432464898381],[11.6094427569903,125.43246659387],[11.6098230803488,125.432498808139],[11.6101357126716,125.432532535812],[11.6104529794108,125.432626691016],[11.6107075303699,125.432722729322],[11.6109915942101,125.432822533836],[11.6110561541331,125.432839481774],[11.61124061108,125.432378122805],[11.6114029329993,125.431941242665]],
+                    label: "0.90 km HOSPITAL", 
+                    color: "black" 
+                },
+                { 
+                    coords: [[11.6110571053576,125.432840379724],[11.6116799178819,125.433100552971],[11.6121582696532,125.433309248347],[11.6121037566711,125.433448378425]],
+                    label: "0.94 km MetroBANK", 
+                    color: "black" 
+                },
+                { 
+                    coords: [[11.609223161168458,125.43247807940111],[11.610411464791468,125.43585648638344],[11.61095725374821,125.43762680001106]],
+                    label: "1.20 km St.Mary's COLLEGE", 
+                    color: "black" 
+                },
+                { 
+                    coords: [[11.6121582686395,125.433309249028],[11.6124867091316,125.433446987806],[11.6128805646471,125.433622291705],[11.6132267206834,125.433782290182],[11.6134638507464,125.433903332662],[11.6133916213818,125.434078636563]], 
+                    label: "1.10 km SAVEMORE", 
+                    color: "black" 
+                }
             ]
         }
     ];
 
-    // Add markers to the map
-    markers.forEach(function(marker) {
-        var markerInstance = L.marker(marker.coords).addTo(myMap);
+    var currentLines = [];
 
-        markerInstance.on('click', function() {
-            var content = `<strong>${marker.title}</strong><br>
-                           Location: ${marker.location}<br>
-                           Area: ${marker.area}<br>
-                           Cost: ${marker.cost}<br>`;
+    function clearLines() {
+        currentLines.forEach(function(line) {
+            myMap.removeLayer(line);
+        });
+        currentLines = [];
+    }
 
-            content += '<h4>Images:</h4>';
-            marker.images.forEach(function(image, index) {
-                content += `<a href="${image}" data-lightbox="${marker.title}" data-title="Image ${index + 1}"><img src="${image}" alt="Image ${index + 1}" style="width: 50px; margin-right: 5px;"></a>`;
+    markers.forEach(function(markerData) {
+        var marker = L.marker(markerData.coords).addTo(myMap);
+
+        marker.on('click', function() {
+            clearLines();
+
+            var content = `<strong>${markerData.title}</strong><br>
+                           Location: ${markerData.location}<br>
+                           Area: ${markerData.area}<br>
+                           Cost: ${markerData.cost}<br>
+                           <h4>Images:</h4>`;
+            markerData.images.forEach(function(image, index) {
+                content += `<a href="${image}" data-lightbox="${markerData.title}" data-title="Image ${index + 1}"><img src="${image}" alt="Image ${index + 1}" style="width: 50px; margin-right: 5px;"></a>`;
             });
 
             content += '<h4>Videos:</h4>';
-            marker.videos.forEach(function(video, index) {
+            markerData.videos.forEach(function(video, index) {
                 content += `<button onclick="playVideo('${video}')">Play Video ${index + 1}</button><br>`;
             });
 
-            L.popup().setLatLng(marker.coords).setContent(content).openOn(myMap);
+            L.popup().setLatLng(markerData.coords).setContent(content).openOn(myMap);
+
+            // Draw multi-point lines and add distance labels at the last point of each route
+            markerData.routes.forEach(function(route) {
+                var polyline = L.polyline(route.coords, { 
+                    color: route.color, 
+                    dashArray: "5, 5"  // This makes the line dashed
+                }).addTo(myMap);
+                currentLines.push(polyline);
+
+                var endLatLng = route.coords[route.coords.length - 1]; // Set the label at the end of the line
+                var labelMarker = L.marker([endLatLng[0], endLatLng[1]], { 
+                    icon: L.divIcon({
+                        className: 'distance-label',
+                        html: `<span style="color: ${route.color};">${route.label}</span>`, // Change text color to match the line color
+                    })
+                }).addTo(myMap);
+                currentLines.push(labelMarker);
+            });
         });
     });
 
@@ -241,6 +407,16 @@
             videoFrame.src = ""; // Stop the video when the modal is closed
         }
     };
+
+     // Functions to zoom to specific lots
+     function zoomToLot(index) {
+        var polygons = [polygon1, polygon2, polygon3];
+        myMap.fitBounds(polygons[index].getBounds());
+    }
+
+    function zoomHome() {
+        myMap.setView([11.6076, 125.4858], 13);
+    }
 </script>
 </body>
 </html>
